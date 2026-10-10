@@ -1,0 +1,2130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>M2A Voice Studio — Microphone Recorder & Voice Changer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f7f4ef;
+      --card: #ffffff;
+      --border: #e8e0d5;
+      --text: #2c2416;
+      --muted: #7a6f5f;
+      --accent: #c9a227;
+      --accent-dark: #a8841a;
+      --gold: #d4af37;
+      --green: #2ecc71;
+      --red: #e74c3c;
+      --sidebar: #faf8f4;
+      --shadow: 0 4px 20px rgba(0,0,0,0.06);
+      --radius: 16px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.45;
+    }
+
+    /* Header */
+    .header {
+      background: linear-gradient(180deg, #fdfaf5 0%, #f7f4ef 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 18px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo-icon {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, #f0d878, #c9a227);
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      font-size: 24px;
+      box-shadow: 0 4px 12px rgba(201,162,39,0.35);
+    }
+
+    .logo h1 {
+      font-size: 1.45rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #1a140c;
+    }
+
+    .logo p {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #fff;
+      border: 1px solid var(--border);
+      padding: 8px 14px;
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+    }
+
+    .brand-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, #f0d878, #c9a227);
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      font-size: 18px;
+    }
+
+    .brand strong { font-size: 0.9rem; display: block; }
+    .brand span { font-size: 0.72rem; color: var(--muted); }
+
+    /* Layout */
+    .app {
+      display: grid;
+      grid-template-columns: 220px 1fr 240px;
+      gap: 20px;
+      padding: 20px 24px 40px;
+      max-width: 1440px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 1100px) {
+      .app { grid-template-columns: 1fr; }
+      .sidebar, .presets { display: none; }
+    }
+
+    /* Sidebar */
+    .sidebar {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 12px;
+      box-shadow: var(--shadow);
+      height: fit-content;
+      position: sticky;
+      top: 16px;
+    }
+
+    .nav-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 14px;
+      border: none;
+      background: transparent;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text);
+      cursor: pointer;
+      transition: all 0.15s;
+      text-align: left;
+      margin-bottom: 4px;
+    }
+
+    .nav-btn:hover { background: #f5f0e8; }
+    .nav-btn.active {
+      background: linear-gradient(135deg, #f0d878, #c9a227);
+      color: #1a140c;
+      font-weight: 600;
+      box-shadow: 0 2px 8px rgba(201,162,39,0.3);
+    }
+
+    .nav-btn .icon { font-size: 1.1rem; width: 22px; text-align: center; }
+
+    .quick-examples {
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    .quick-examples h3 {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      margin-bottom: 10px;
+      padding-left: 6px;
+    }
+
+    .quick-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      background: #faf8f4;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      color: var(--text);
+      cursor: pointer;
+      margin-bottom: 6px;
+      transition: all 0.15s;
+    }
+
+    .quick-btn:hover {
+      background: #f0ebe3;
+      border-color: var(--accent);
+    }
+
+    .fun-box {
+      margin-top: 18px;
+      background: linear-gradient(135deg, #2c2416, #1a140c);
+      color: #f0d878;
+      border-radius: 12px;
+      padding: 14px;
+      text-align: center;
+      font-size: 0.85rem;
+      font-weight: 600;
+      line-height: 1.4;
+    }
+
+    /* Main content */
+    .main {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 22px;
+      box-shadow: var(--shadow);
+    }
+
+    .card h2 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card h2 span.num {
+      display: inline-grid;
+      place-items: center;
+      width: 26px;
+      height: 26px;
+      background: linear-gradient(135deg, #f0d878, #c9a227);
+      color: #1a140c;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 800;
+    }
+
+    /* Voice chooser */
+    .voice-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .voice-opt {
+      width: 72px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 6px;
+      border: 2px solid transparent;
+      border-radius: 14px;
+      background: #faf8f4;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-size: 0.72rem;
+      font-weight: 500;
+      color: var(--muted);
+    }
+
+    .voice-opt:hover {
+      background: #f0ebe3;
+      border-color: #e8d9b8;
+    }
+
+    .voice-opt.selected {
+      border-color: var(--accent);
+      background: #fff9eb;
+      color: var(--text);
+      box-shadow: 0 0 0 3px rgba(201,162,39,0.2);
+    }
+
+    .voice-opt .avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 1.4rem;
+      background: #fff;
+      border: 1px solid var(--border);
+    }
+
+    /* Record section */
+    .record-area {
+      display: grid;
+      grid-template-columns: 1fr 1.1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    @media (max-width: 800px) {
+      .record-area { grid-template-columns: 1fr; }
+    }
+
+    .mic-zone {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      padding: 10px 0;
+    }
+
+    .mic-btn {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: none;
+      background: linear-gradient(145deg, #f0d878, #c9a227);
+      box-shadow: 0 8px 24px rgba(201,162,39,0.4), inset 0 2px 0 rgba(255,255,255,0.4);
+      font-size: 48px;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+      position: relative;
+      color: #1a140c;
+    }
+
+    .mic-btn:hover { transform: scale(1.04); }
+    .mic-btn.recording {
+      background: linear-gradient(145deg, #e74c3c, #c0392b);
+      box-shadow: 0 0 0 0 rgba(231,76,60,0.5);
+      animation: pulse-red 1.4s infinite;
+      color: white;
+    }
+
+    @keyframes pulse-red {
+      0% { box-shadow: 0 0 0 0 rgba(231,76,60,0.55); }
+      70% { box-shadow: 0 0 0 18px rgba(231,76,60,0); }
+      100% { box-shadow: 0 0 0 0 rgba(231,76,60,0); }
+    }
+
+    .status-text {
+      font-size: 0.9rem;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--green);
+    }
+
+    .status-dot.recording {
+      background: var(--red);
+      animation: blink 0.8s infinite;
+    }
+
+    @keyframes blink {
+      50% { opacity: 0.4; }
+    }
+
+    .rec-controls {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn {
+      padding: 10px 18px;
+      border-radius: 10px;
+      border: none;
+      font-weight: 600;
+      font-size: 0.88rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      transition: all 0.15s;
+    }
+
+    .btn-primary {
+      background: #1a140c;
+      color: #fff;
+    }
+    .btn-primary:hover { background: #2c2416; }
+    .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    .btn-secondary {
+      background: #e8e0d5;
+      color: var(--text);
+    }
+    .btn-secondary:hover { background: #d9d0c3; }
+    .btn-secondary:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    .btn-gold {
+      background: linear-gradient(135deg, #f0d878, #c9a227);
+      color: #1a140c;
+      font-weight: 700;
+    }
+    .btn-gold:hover { filter: brightness(1.05); }
+
+    /* Sliders */
+    .settings-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .slider-row {
+      display: grid;
+      grid-template-columns: 90px 1fr 48px;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+
+    .slider-row label { color: var(--muted); }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 8px;
+      border-radius: 4px;
+      background: #e8e0d5;
+      outline: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #f0d878, #c9a227);
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      border: 2px solid #fff;
+    }
+
+    .slider-val {
+      text-align: right;
+      font-weight: 600;
+      font-size: 0.82rem;
+      color: var(--text);
+    }
+
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 4px;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .checkbox-row input { width: 16px; height: 16px; accent-color: var(--accent); }
+
+    /* Effects */
+    .effects-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    @media (max-width: 600px) {
+      .effects-grid { grid-template-columns: 1fr; }
+    }
+
+    .effect-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #faf8f4;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
+    }
+
+    .effect-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      display: grid;
+      place-items: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    .effect-item select {
+      flex: 1;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 8px;
+      font-size: 0.82rem;
+      background: #fff;
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    /* Mix & Download */
+    .mix-area {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr 1fr;
+      gap: 18px;
+    }
+
+    @media (max-width: 900px) {
+      .mix-area { grid-template-columns: 1fr; }
+    }
+
+    .wave-box {
+      background: #faf8f4;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+    }
+
+    .wave-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    canvas {
+      width: 100%;
+      height: 48px;
+      border-radius: 6px;
+      background: #fff;
+      display: block;
+    }
+
+    .timeline {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 10px;
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    .timeline input[type="range"] { flex: 1; }
+
+    .play-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .mix-settings .slider-row {
+      grid-template-columns: 100px 1fr 42px;
+      font-size: 0.82rem;
+    }
+
+    .download-box {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .download-box .btn { width: 100%; justify-content: center; }
+
+    .tip {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 6px;
+      line-height: 1.35;
+    }
+
+    /* Presets sidebar */
+    .presets {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 12px;
+      box-shadow: var(--shadow);
+      height: fit-content;
+      position: sticky;
+      top: 16px;
+    }
+
+    .presets h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      padding-left: 4px;
+    }
+
+    .preset-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background 0.15s;
+      margin-bottom: 4px;
+    }
+
+    .preset-item:hover { background: #f5f0e8; }
+    .preset-item.active {
+      background: #fff9eb;
+      box-shadow: inset 0 0 0 2px var(--accent);
+    }
+
+    .preset-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: #fff;
+      border: 1px solid var(--border);
+      display: grid;
+      place-items: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+
+    .preset-info { flex: 1; min-width: 0; }
+    .preset-info strong {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    .preset-info span {
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+
+    .preset-play {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: #fff;
+      display: grid;
+      place-items: center;
+      font-size: 0.7rem;
+      cursor: pointer;
+      color: var(--text);
+      transition: all 0.15s;
+    }
+
+    .preset-play:hover {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #1a140c;
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 16px;
+      font-size: 0.8rem;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      background: #fdfaf5;
+    }
+
+    .footer span { color: var(--accent-dark); font-weight: 600; }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: #1a140c;
+      color: #fff;
+      padding: 12px 22px;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+      opacity: 0;
+      transition: all 0.3s;
+      z-index: 100;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+
+    /* Real-time Party Microphone */
+    .party-mic-card { border: 1px solid #e1c66c; }
+    .party-mic-intro { color: var(--muted); font-size: .88rem; margin: -4px 0 16px; }
+    .party-mic-status { display:flex; align-items:center; gap:8px; font-size:.86rem; color:var(--muted); margin:12px 0; }
+    .party-mic-status .status-dot { background:#9b9488; }
+    .party-mic-status .status-dot.live { background:var(--green); animation:blink .8s infinite; }
+    .party-actions { display:flex; flex-wrap:wrap; gap:10px; margin:14px 0; }
+    .party-presets { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+    .party-preset { border:1px solid var(--border); background:#faf8f4; border-radius:9px; padding:9px 12px; cursor:pointer; color:var(--text); font-weight:600; font-size:.82rem; }
+    .party-preset:hover, .party-preset.active { background:#fff4cf; border-color:var(--accent); }
+    .party-device-row { display:grid; grid-template-columns:130px minmax(0,1fr); align-items:center; gap:10px; margin-top:12px; font-size:.85rem; }
+    .party-device-row label { color:var(--muted); font-weight:600; }
+    .party-device-row select { width:100%; min-width:0; border:1px solid var(--border); border-radius:8px; padding:9px; background:#fff; color:var(--text); }
+    .party-note { font-size:.76rem; color:var(--muted); margin-top:12px; line-height:1.5; }
+    @media (max-width:600px) {
+      .party-device-row { grid-template-columns:1fr; gap:6px; }
+      .party-actions .btn { flex:1; justify-content:center; }
+    }
+
+    /* Sections visibility */
+    .section { display: none; }
+    .section.active { display: block; }
+
+    .section-card { margin-bottom: 18px; }
+  </style>
+</head>
+<body>
+  
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2269884583846743"
+     crossorigin="anonymous"></script>
+<!-- Vertical New -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-2269884583846743"
+     data-ad-slot="2906167922"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  
+  <header class="header">
+    <div class="logo">
+      <div class="logo-icon">🎤</div>
+      <div>
+        <h1>Microphone Recorder & Voice Changer</h1>
+        <p>Live party microphone · Record your voice · Change your voice · Download audio</p>
+      </div>
+    </div>
+    <div class="brand">
+      <div class="brand-icon">🎵</div>
+      <div>
+        <strong>M2A Voice Studio</strong>
+        <span>Create · Record · Be Creative</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="app">
+    <!-- Left sidebar -->
+    <aside class="sidebar">
+      <button class="nav-btn active" data-section="changer">
+        <span class="icon">🎤</span> Voice Changer
+      </button>
+      <button class="nav-btn" data-section="party-mic">
+        <span class="icon">🎉</span> Party Microphone
+      </button>
+      <button class="nav-btn" data-section="recorder">
+        <span class="icon">🔴</span> Voice Recorder
+      </button>
+      <button class="nav-btn" data-section="live">
+        <span class="icon">🎵</span> Live Voice + Music
+      </button>
+      <button class="nav-btn" data-section="effects">
+        <span class="icon">🎛️</span> Voice Effects
+      </button>
+      <button class="nav-btn" data-section="ai">
+        <span class="icon">🤖</span> AI Cartoon Voices
+      </button>
+      <button class="nav-btn" data-section="settings">
+        <span class="icon">⚙️</span> Settings
+      </button>
+
+      <div class="quick-examples">
+        <h3>Quick Examples</h3>
+        <button class="quick-btn" data-voice="normal">🎤 Normal</button>
+        <button class="quick-btn" data-voice="cartoon">😄 Cartoon</button>
+        <button class="quick-btn" data-voice="robot">🤖 Robot</button>
+        <button class="quick-btn" data-voice="monster">👹 Monster</button>
+        <button class="quick-btn" data-voice="deep">🗣️ Deep</button>
+        <button class="quick-btn" data-voice="female">👩 Female</button>
+        <button class="quick-btn" data-voice="child">🧒 Child</button>
+        <button class="quick-btn" data-voice="alien">👽 Alien</button>
+        <button class="quick-btn" data-voice="chipmunk">🐿️ Chipmunk</button>
+        <button class="quick-btn" data-voice="helium">🎈 Helium</button>
+      </div>
+
+      <div class="fun-box">
+        ⭐ Have fun and<br>create something<br>amazing!
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="main">
+      <!-- 1. Choose Voice -->
+      <div class="card">
+        <h2><span class="num">1</span> Choose Your Voice</h2>
+        <div class="voice-grid" id="voiceGrid"></div>
+      </div>
+
+
+      <!-- Real-time Party Microphone: separate from the recorder -->
+      <section class="card party-mic-card" id="partyMicCard">
+        <h2><span class="num">LIVE</span> 🎉 Real-time Party Microphone</h2>
+        <p class="party-mic-intro">Speak into your computer or USB microphone and hear your voice live through your selected audio output. This runs independently from voice recording.</p>
+        <div class="party-device-row">
+          <label for="partyInputDevice">Microphone input</label>
+          <select id="partyInputDevice">
+            <option value="default">Default microphone</option>
+          </select>
+        </div>
+        <div class="party-mic-status">
+          <span class="status-dot" id="partyMicDot"></span>
+          <span id="partyMicStatus">Microphone is stopped</span>
+        </div>
+        <div class="party-actions">
+          <button class="btn btn-primary" id="partyStartBtn">🎤 Start Microphone</button>
+          <button class="btn btn-secondary" id="partyStopBtn" disabled>■ Stop Microphone</button>
+        </div>
+        <div class="settings-grid">
+          <div class="slider-row">
+            <label for="partyVolume">Mic Volume</label>
+            <input type="range" id="partyVolume" min="0" max="150" value="70" />
+            <span class="slider-val" id="partyVolumeVal">70%</span>
+          </div>
+          <div class="slider-row">
+            <label for="partyBass">Bass</label>
+            <input type="range" id="partyBass" min="-12" max="12" value="3" />
+            <span class="slider-val" id="partyBassVal">+3 dB</span>
+          </div>
+          <div class="slider-row">
+            <label for="partyTreble">Treble</label>
+            <input type="range" id="partyTreble" min="-12" max="12" value="2" />
+            <span class="slider-val" id="partyTrebleVal">+2 dB</span>
+          </div>
+          <div class="slider-row">
+            <label for="partyEcho">Echo</label>
+            <input type="range" id="partyEcho" min="0" max="60" value="10" />
+            <span class="slider-val" id="partyEchoVal">10%</span>
+          </div>
+          <div class="slider-row">
+            <label for="partyReverb">Reverb</label>
+            <input type="range" id="partyReverb" min="0" max="60" value="8" />
+            <span class="slider-val" id="partyReverbVal">8%</span>
+          </div>
+        </div>
+        <div class="party-presets" aria-label="Party microphone presets">
+          <button type="button" class="party-preset active" data-party-preset="clean">🎙️ Clean Voice</button>
+          <button type="button" class="party-preset" data-party-preset="dj">🎧 DJ Party</button>
+          <button type="button" class="party-preset" data-party-preset="hall">🏛️ Big Hall</button>
+          <button type="button" class="party-preset" data-party-preset="megaphone">📣 Megaphone</button>
+          <button type="button" class="party-preset" data-party-preset="bass">🔊 Bass Boost</button>
+        </div>
+        <p class="party-note">Use headphones to prevent feedback. For speakers or a PA system, start with a low mic volume and raise it gradually. Your browser will ask permission to use the microphone. This feature requires HTTPS or localhost in most browsers.</p>
+      </section>
+
+      <!-- 2. Record + Settings -->
+      <div class="card">
+        <h2><span class="num">2</span> Record Your Voice</h2>
+        <div class="record-area">
+          <div class="mic-zone">
+            <button class="mic-btn" id="micBtn" title="Click to start/stop recording">🎤</button>
+            <div class="status-text">
+              <span class="status-dot" id="statusDot"></span>
+              <span id="statusText">Ready to record…</span>
+            </div>
+            <div class="rec-controls">
+              <button class="btn btn-primary" id="startBtn">● Start Recording</button>
+              <button class="btn btn-secondary" id="stopBtn" disabled>■ Stop Recording</button>
+            </div>
+          </div>
+
+          <div>
+            <h3 style="font-size:0.9rem;font-weight:600;margin-bottom:12px;color:var(--muted)">Voice Settings</h3>
+            <div class="settings-grid">
+              <div class="slider-row">
+                <label>Voice Level</label>
+                <input type="range" id="level" min="0" max="200" value="100" />
+                <span class="slider-val" id="levelVal">100%</span>
+              </div>
+              <div class="slider-row">
+                <label>Pitch</label>
+                <input type="range" id="pitch" min="-12" max="12" value="0" step="0.5" />
+                <span class="slider-val" id="pitchVal">0</span>
+              </div>
+              <div class="slider-row">
+                <label>Speed</label>
+                <input type="range" id="speed" min="50" max="200" value="100" />
+                <span class="slider-val" id="speedVal">100%</span>
+              </div>
+              <div class="slider-row">
+                <label>Reverb</label>
+                <input type="range" id="reverb" min="0" max="100" value="10" />
+                <span class="slider-val" id="reverbVal">10%</span>
+              </div>
+              <label class="checkbox-row">
+                <input type="checkbox" id="muteEffects" />
+                Mute effects (preview dry signal)
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Voice Effects -->
+      <div class="card">
+        <h2><span class="num">3</span> Voice Effects</h2>
+        <div class="effects-grid">
+          <div class="effect-item">
+            <div class="effect-icon" style="background:#e8d5f5">🎵</div>
+            <select id="fxPitch">
+              <option value="0">Pitch Shift: 0</option>
+              <option value="-6">-6 semitones</option>
+              <option value="-4">-4 semitones</option>
+              <option value="-2">-2 semitones</option>
+              <option value="2">+2 semitones</option>
+              <option value="4">+4 semitones</option>
+              <option value="6">+6 semitones</option>
+              <option value="8">+8 semitones</option>
+              <option value="12">+12 (octave)</option>
+            </select>
+          </div>
+          <div class="effect-item">
+            <div class="effect-icon" style="background:#d5e8f5">🔊</div>
+            <select id="fxEcho">
+              <option value="0">Echo: Off</option>
+              <option value="10">Echo: 10%</option>
+              <option value="25">Echo: 25%</option>
+              <option value="40">Echo: 40%</option>
+              <option value="60">Echo: 60%</option>
+              <option value="80">Echo: 80%</option>
+            </select>
+          </div>
+          <div class="effect-item">
+            <div class="effect-icon" style="background:#d5f5e8">🌊</div>
+            <select id="fxReverb">
+              <option value="0">Reverb: Off</option>
+              <option value="10">Reverb: 10%</option>
+              <option value="25">Reverb: 25%</option>
+              <option value="40">Reverb: 40%</option>
+              <option value="60">Reverb: 60%</option>
+              <option value="80">Reverb: 80%</option>
+            </select>
+          </div>
+          <div class="effect-item">
+            <div class="effect-icon" style="background:#d5f5d5">🤖</div>
+            <select id="fxRobot">
+              <option value="0">Robot: Off</option>
+              <option value="30">Robot: Light</option>
+              <option value="60">Robot: Medium</option>
+              <option value="100">Robot: Full</option>
+            </select>
+          </div>
+          <div class="effect-item">
+            <div class="effect-icon" style="background:#f5d5d5">🎸</div>
+            <select id="fxDistortion">
+              <option value="0">Distortion: Off</option>
+              <option value="20">Distortion: 20%</option>
+              <option value="40">Distortion: 40%</option>
+              <option value="70">Distortion: 70%</option>
+              <option value="100">Distortion: Full</option>
+            </select>
+          </div>
+          <div class="effect-item">
+            <div class="effect-icon" style="background:#f5e8d5">📊</div>
+            <select id="fxEQ">
+              <option value="0">EQ: Flat</option>
+              <option value="bass">Bass Boost</option>
+              <option value="treble">Treble Boost</option>
+              <option value="radio">Radio / Telephone</option>
+              <option value="warm">Warm / Soft</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. Mix & Download -->
+      <div class="card">
+        <h2><span class="num">4</span> Mix & Download</h2>
+        <div class="mix-area">
+          <div>
+            <div class="wave-box">
+              <div class="wave-label">🎵 Background (music)</div>
+              <canvas id="bgWave" height="48"></canvas>
+              <div class="wave-label" style="margin-top:10px">🎤 Your Voice</div>
+              <canvas id="voiceWave" height="48"></canvas>
+              <div class="timeline">
+                <span id="timeCurrent">00:00</span>
+                <input type="range" id="seek" min="0" max="100" value="0" />
+                <span id="timeTotal">00:00</span>
+              </div>
+              <div class="play-row">
+                <button class="btn btn-primary" id="playBtn">▶ Play</button>
+                <button class="btn btn-secondary" id="pauseBtn" disabled>❚❚ Pause</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="mix-settings">
+            <h3 style="font-size:0.9rem;font-weight:600;margin-bottom:12px;color:var(--muted)">Mix Settings</h3>
+            <div class="slider-row">
+              <label>Music Volume</label>
+              <input type="range" id="musicVol" min="0" max="100" value="100" />
+              <span class="slider-val" id="musicVolVal">100%</span>
+            </div>
+            <div class="slider-row">
+              <label>Voice Volume</label>
+              <input type="range" id="voiceVol" min="0" max="200" value="120" />
+              <span class="slider-val" id="voiceVolVal">120%</span>
+            </div>
+            <div class="slider-row">
+              <label>Master Volume</label>
+              <input type="range" id="masterVol" min="0" max="100" value="100" />
+              <span class="slider-val" id="masterVolVal">100%</span>
+            </div>
+            <label class="checkbox-row" style="margin-top:12px">
+              <input type="checkbox" id="useKeyboard" checked />
+              Use Keyboard Timer Notice
+            </label>
+            <p class="tip">Record just your voice (even when music is playing in the background)</p>
+          </div>
+
+          <div class="download-box">
+            <h3 style="font-size:0.9rem;font-weight:600;margin-bottom:4px;color:var(--muted)">Download & Save</h3>
+            <button class="btn btn-gold" id="downloadWav">⬇ Download Audio (WAV)</button>
+            <button class="btn btn-secondary" id="downloadMp3">⬇ Download (MP3)</button>
+            <button class="btn btn-secondary" id="saveProject">💾 Save Project</button>
+            <p class="tip">Tip: Use headphones for the best results and a cleaner voice mix.</p>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Right presets -->
+    <aside class="presets">
+      <h3>Preset Voices</h3>
+      <div id="presetList"></div>
+    </aside>
+  </div>
+
+  <footer class="footer">
+    ⭐ Record · Change Your Voice · Mix With Music · Download Your Creation &nbsp;&nbsp;|&nbsp;&nbsp;
+    <span>M2A Voice Studio</span> — Make Your Voice Sound Amazing!
+  </footer>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // ========== Voice Presets (extended) ==========
+    const VOICES = [
+      { id: 'normal',   name: 'Normal',   emoji: '🟡', desc: 'Original voice', pitch: 0, speed: 1, robot: 0, echo: 0, reverb: 0.1, distortion: 0, eq: '0' },
+      { id: 'male',     name: 'Male',     emoji: '👨', desc: 'Deeper tone', pitch: -3, speed: 0.95, robot: 0, echo: 0, reverb: 0.05, distortion: 0, eq: 'bass' },
+      { id: 'female',   name: 'Female',   emoji: '👩', desc: 'Higher tone', pitch: 3, speed: 1.05, robot: 0, echo: 0, reverb: 0.08, distortion: 0, eq: 'treble' },
+      { id: 'child',    name: 'Child',    emoji: '🧒', desc: 'Young & bright', pitch: 5, speed: 1.1, robot: 0, echo: 0, reverb: 0.05, distortion: 0, eq: '0' },
+      { id: 'robot',    name: 'Robot',    emoji: '🤖', desc: 'Mechanical voice', pitch: -1, speed: 0.9, robot: 80, echo: 0.1, reverb: 0.2, distortion: 20, eq: 'radio' },
+      { id: 'monster',  name: 'Monster',  emoji: '👹', desc: 'Scary & funny', pitch: -7, speed: 0.8, robot: 40, echo: 0.3, reverb: 0.4, distortion: 50, eq: 'bass' },
+      { id: 'alien',    name: 'Alien',    emoji: '👽', desc: 'Space voice', pitch: 6, speed: 0.85, robot: 60, echo: 0.4, reverb: 0.5, distortion: 30, eq: 'radio' },
+      { id: 'cartoon',  name: 'Cartoon',  emoji: '😄', desc: 'Fun & energetic', pitch: 4, speed: 1.15, robot: 10, echo: 0.1, reverb: 0.1, distortion: 0, eq: '0' },
+      { id: 'deep',     name: 'Deep',     emoji: '🗣️', desc: 'Low & powerful', pitch: -8, speed: 0.85, robot: 0, echo: 0.15, reverb: 0.3, distortion: 10, eq: 'bass' },
+      { id: 'chipmunk', name: 'Chipmunk', emoji: '🐿️', desc: 'High pitch', pitch: 10, speed: 1.4, robot: 0, echo: 0, reverb: 0.05, distortion: 0, eq: 'treble' },
+      { id: 'echo',     name: 'Echo',     emoji: '🔊', desc: 'Echo chamber', pitch: 0, speed: 1, robot: 0, echo: 0.7, reverb: 0.5, distortion: 0, eq: '0' },
+      { id: 'helium',   name: 'Helium',   emoji: '🎈', desc: 'High & silly', pitch: 12, speed: 1.25, robot: 0, echo: 0.05, reverb: 0.1, distortion: 0, eq: 'treble' },
+      // Extra voices
+      { id: 'cartoonboy', name: 'Cartoon Boy', emoji: '👦', desc: 'Fun & energetic', pitch: 3, speed: 1.12, robot: 5, echo: 0.05, reverb: 0.08, distortion: 0, eq: '0' },
+      { id: 'cartoongirl', name: 'Cartoon Girl', emoji: '👧', desc: 'Sweet & cute', pitch: 5, speed: 1.18, robot: 0, echo: 0.05, reverb: 0.1, distortion: 0, eq: 'treble' },
+      { id: 'ghost',    name: 'Ghost',    emoji: '👻', desc: 'Ethereal whisper', pitch: -4, speed: 0.75, robot: 20, echo: 0.6, reverb: 0.7, distortion: 5, eq: 'warm' },
+      { id: 'radio',    name: 'Radio',    emoji: '📻', desc: 'Vintage radio', pitch: 0, speed: 1, robot: 30, echo: 0.2, reverb: 0.15, distortion: 25, eq: 'radio' },
+      { id: 'demon',    name: 'Demon',    emoji: '😈', desc: 'Dark & deep', pitch: -10, speed: 0.7, robot: 50, echo: 0.4, reverb: 0.55, distortion: 60, eq: 'bass' },
+      { id: 'fairy',    name: 'Fairy',    emoji: '🧚', desc: 'Magical sparkle', pitch: 8, speed: 1.2, robot: 0, echo: 0.25, reverb: 0.45, distortion: 0, eq: 'treble' },
+      { id: 'villain',  name: 'Villain',  emoji: '🦹', desc: 'Menacing tone', pitch: -5, speed: 0.9, robot: 15, echo: 0.2, reverb: 0.35, distortion: 35, eq: 'bass' },
+      { id: 'baby',     name: 'Baby',     emoji: '👶', desc: 'Cute high voice', pitch: 9, speed: 1.3, robot: 0, echo: 0, reverb: 0.05, distortion: 0, eq: '0' },
+    ];
+
+    // ========== State ==========
+    let currentVoice = VOICES[0];
+    let audioContext = null;
+    let mediaStream = null;
+    let mediaRecorder = null;
+    let recordedChunks = [];
+    let recordedBuffer = null;      // AudioBuffer of raw recording
+    let isRecording = false;
+    let isPlaying = false;
+    let sourceNode = null;
+    let startTime = 0;
+    let pauseOffset = 0;
+    let duration = 0;
+
+    // Effect nodes (rebuilt on play)
+    let gainNode, pitchNode, convolver, delayNode, distortionNode, filterNode, masterGain;
+
+    // ========== DOM ==========
+    const $ = id => document.getElementById(id);
+    const micBtn = $('micBtn');
+    const startBtn = $('startBtn');
+    const stopBtn = $('stopBtn');
+    const statusDot = $('statusDot');
+    const statusText = $('statusText');
+    const playBtn = $('playBtn');
+    const pauseBtn = $('pauseBtn');
+    const toast = $('toast');
+
+    // ========== Init UI ==========
+    function buildVoiceGrid() {
+      const grid = $('voiceGrid');
+      grid.innerHTML = '';
+      VOICES.slice(0, 12).forEach(v => {
+        const div = document.createElement('div');
+        div.className = 'voice-opt' + (v.id === currentVoice.id ? ' selected' : '');
+        div.dataset.id = v.id;
+        div.innerHTML = `<div class="avatar">${v.emoji}</div><span>${v.name}</span>`;
+        div.onclick = () => selectVoice(v.id);
+        grid.appendChild(div);
+      });
+    }
+
+    function buildPresetList() {
+      const list = $('presetList');
+      list.innerHTML = '';
+      const presets = [
+        { id: 'cartoonboy', name: 'Cartoon Boy', desc: 'Fun & energetic' },
+        { id: 'cartoongirl', name: 'Cartoon Girl', desc: 'Sweet & cute' },
+        { id: 'robot', name: 'Robot', desc: 'Mechanical voice' },
+        { id: 'monster', name: 'Monster', desc: 'Scary & funny' },
+        { id: 'alien', name: 'Alien', desc: 'Space voice' },
+        { id: 'chipmunk', name: 'Chipmunk', desc: 'High pitch' },
+        { id: 'deep', name: 'Deep Voice', desc: 'Low & powerful' },
+        { id: 'helium', name: 'Helium', desc: 'High & silly' },
+        { id: 'ghost', name: 'Ghost', desc: 'Ethereal whisper' },
+        { id: 'demon', name: 'Demon', desc: 'Dark & deep' },
+        { id: 'fairy', name: 'Fairy', desc: 'Magical sparkle' },
+        { id: 'radio', name: 'Radio', desc: 'Vintage radio' },
+      ];
+      presets.forEach(p => {
+        const v = VOICES.find(x => x.id === p.id) || p;
+        const div = document.createElement('div');
+        div.className = 'preset-item' + (currentVoice.id === p.id ? ' active' : '');
+        div.innerHTML = `
+          <div class="preset-avatar">${v.emoji || '🎤'}</div>
+          <div class="preset-info">
+            <strong>${p.name}</strong>
+            <span>${p.desc}</span>
+          </div>
+          <button class="preset-play" title="Preview">▶</button>
+        `;
+        div.querySelector('.preset-play').onclick = (e) => {
+          e.stopPropagation();
+          selectVoice(p.id);
+          if (recordedBuffer) playProcessed();
+          else showToast('Record something first to preview!');
+        };
+        div.onclick = () => selectVoice(p.id);
+        list.appendChild(div);
+      });
+    }
+
+    function selectVoice(id) {
+      const v = VOICES.find(x => x.id === id);
+      if (!v) return;
+      currentVoice = v;
+      // Apply preset values to UI
+      $('pitch').value = v.pitch;
+      $('speed').value = Math.round(v.speed * 100);
+      $('reverb').value = Math.round(v.reverb * 100);
+      $('fxPitch').value = String(v.pitch);
+      $('fxEcho').value = String(Math.round(v.echo * 100));
+      $('fxReverb').value = String(Math.round(v.reverb * 100));
+      $('fxRobot').value = String(v.robot);
+      $('fxDistortion').value = String(v.distortion);
+      $('fxEQ').value = v.eq;
+      updateSliderLabels();
+      buildVoiceGrid();
+      buildPresetList();
+      showToast(`Voice: ${v.name}`);
+      saveSettings();
+    }
+
+    // ========== Sliders ==========
+    function updateSliderLabels() {
+      $('levelVal').textContent = $('level').value + '%';
+      $('pitchVal').textContent = $('pitch').value;
+      $('speedVal').textContent = $('speed').value + '%';
+      $('reverbVal').textContent = $('reverb').value + '%';
+      $('musicVolVal').textContent = $('musicVol').value + '%';
+      $('voiceVolVal').textContent = $('voiceVol').value + '%';
+      $('masterVolVal').textContent = $('masterVol').value + '%';
+    }
+
+    ['level','pitch','speed','reverb','musicVol','voiceVol','masterVol'].forEach(id => {
+      $(id).addEventListener('input', () => {
+        updateSliderLabels();
+        saveSettings();
+      });
+    });
+
+    ['fxPitch','fxEcho','fxReverb','fxRobot','fxDistortion','fxEQ'].forEach(id => {
+      $(id).addEventListener('change', () => {
+        // Sync pitch slider with fxPitch
+        if (id === 'fxPitch') $('pitch').value = $(id).value;
+        if (id === 'fxReverb') $('reverb').value = $(id).value;
+        updateSliderLabels();
+        saveSettings();
+      });
+    });
+
+    // ========== Audio Context ==========
+    function ensureAudio() {
+      if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioContext.state === 'suspended') audioContext.resume();
+      return audioContext;
+    }
+
+    // Simple impulse for reverb
+    function createReverbImpulse(seconds = 1.5, decay = 2.0) {
+      const ctx = ensureAudio();
+      const rate = ctx.sampleRate;
+      const length = rate * seconds;
+      const impulse = ctx.createBuffer(2, length, rate);
+      for (let c = 0; c < 2; c++) {
+        const channel = impulse.getChannelData(c);
+        for (let i = 0; i < length; i++) {
+          channel[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / length, decay);
+        }
+      }
+      return impulse;
+    }
+
+    function makeDistortionCurve(amount) {
+      const k = amount;
+      const n = 44100;
+      const curve = new Float32Array(n);
+      const deg = Math.PI / 180;
+      for (let i = 0; i < n; i++) {
+        const x = (i * 2) / n - 1;
+        curve[i] = ((3 + k) * x * 20 * deg) / (Math.PI + k * Math.abs(x));
+      }
+      return curve;
+    }
+
+
+    // ========== Independent Real-time Party Microphone ==========
+    let partyStream = null;
+    let partyContext = null;
+    let partySource = null;
+    let partyInputGain = null;
+    let partyBassNode = null;
+    let partyTrebleNode = null;
+    let partyEchoDelay = null;
+    let partyEchoGain = null;
+    let partyEchoFeedback = null;
+    let partyReverbNode = null;
+    let partyReverbGain = null;
+    let partyMasterGain = null;
+    let partyDryGain = null;
+    let partyWetMix = null;
+
+    const partyDefaults = {
+      clean:     { volume: 70, bass: 0, treble: 0, echo: 0,  reverb: 0 },
+      dj:        { volume: 65, bass: 5, treble: 3, echo: 22, reverb: 18 },
+      hall:      { volume: 60, bass: 1, treble: 1, echo: 12, reverb: 48 },
+      megaphone: { volume: 55, bass: -7, treble: 7, echo: 0, reverb: 0 },
+      bass:      { volume: 65, bass: 10, treble: -2, echo: 5, reverb: 8 }
+    };
+
+    function partySetLabel(id, value) {
+      const labels = {
+        partyVolume: `${value}%`,
+        partyBass: `${Number(value) > 0 ? '+' : ''}${value} dB`,
+        partyTreble: `${Number(value) > 0 ? '+' : ''}${value} dB`,
+        partyEcho: `${value}%`,
+        partyReverb: `${value}%`
+      };
+      $(id + 'Val').textContent = labels[id];
+    }
+
+    function updatePartyLabels() {
+      ['partyVolume', 'partyBass', 'partyTreble', 'partyEcho', 'partyReverb'].forEach(id => {
+        partySetLabel(id, $(id).value);
+      });
+    }
+
+    function makePartyImpulse(ctx, seconds = 1.8, decay = 2.4) {
+      const length = Math.floor(ctx.sampleRate * seconds);
+      const impulse = ctx.createBuffer(2, length, ctx.sampleRate);
+      for (let channel = 0; channel < 2; channel++) {
+        const data = impulse.getChannelData(channel);
+        for (let i = 0; i < length; i++) {
+          data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / length, decay);
+        }
+      }
+      return impulse;
+    }
+
+    function setPartyStatus(message, live) {
+      $('partyMicStatus').textContent = message;
+      $('partyMicDot').classList.toggle('live', !!live);
+      $('partyStartBtn').disabled = !!live;
+      $('partyStopBtn').disabled = !live;
+    }
+
+    function updatePartyAudio() {
+      updatePartyLabels();
+      if (!partyContext || !partyMasterGain) return;
+
+      const now = partyContext.currentTime;
+      const volume = Number($('partyVolume').value) / 100;
+      const bass = Number($('partyBass').value);
+      const treble = Number($('partyTreble').value);
+      const echo = Number($('partyEcho').value) / 100;
+      const reverb = Number($('partyReverb').value) / 100;
+
+      partyMasterGain.gain.setTargetAtTime(volume, now, 0.025);
+      partyBassNode.gain.setTargetAtTime(bass, now, 0.025);
+      partyTrebleNode.gain.setTargetAtTime(treble, now, 0.025);
+      partyEchoGain.gain.setTargetAtTime(echo * 0.42, now, 0.025);
+      partyEchoFeedback.gain.setTargetAtTime(Math.min(0.42, echo * 0.5), now, 0.025);
+      partyReverbGain.gain.setTargetAtTime(reverb * 0.65, now, 0.025);
+      partyWetMix.gain.setTargetAtTime(echo > 0 ? 1 : 0, now, 0.025);
+    }
+
+    async function refreshPartyInputs() {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) return;
+      try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const select = $('partyInputDevice');
+        const previous = select.value;
+        select.innerHTML = '';
+        const defaultOption = document.createElement('option');
+        defaultOption.value = 'default';
+        defaultOption.textContent = 'Default microphone';
+        select.appendChild(defaultOption);
+        devices.filter(device => device.kind === 'audioinput').forEach((device, index) => {
+          if (!device.deviceId || device.deviceId === 'default') return;
+          const option = document.createElement('option');
+          option.value = device.deviceId;
+          option.textContent = device.label || `Microphone ${index + 1}`;
+          select.appendChild(option);
+        });
+        if ([...select.options].some(option => option.value === previous)) select.value = previous;
+      } catch (err) {
+        console.warn('Could not list microphone devices', err);
+      }
+    }
+
+    async function startPartyMicrophone() {
+      if (partyStream) return;
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        setPartyStatus('Microphone access needs a supported browser and HTTPS.', false);
+        showToast('Use HTTPS and a modern browser for live microphone');
+        return;
+      }
+      try {
+        const deviceId = $('partyInputDevice').value;
+        const audioConstraints = {
+          echoCancellation: false,
+          noiseSuppression: false,
+          autoGainControl: false
+        };
+        if (deviceId && deviceId !== 'default') audioConstraints.deviceId = { exact: deviceId };
+
+        partyStream = await navigator.mediaDevices.getUserMedia({ audio: audioConstraints });
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        partyContext = new AudioContextClass();
+        await partyContext.resume();
+
+        partySource = partyContext.createMediaStreamSource(partyStream);
+        partyInputGain = partyContext.createGain();
+
+        partyBassNode = partyContext.createBiquadFilter();
+        partyBassNode.type = 'lowshelf';
+        partyBassNode.frequency.value = 180;
+
+        partyTrebleNode = partyContext.createBiquadFilter();
+        partyTrebleNode.type = 'highshelf';
+        partyTrebleNode.frequency.value = 3200;
+
+        partyDryGain = partyContext.createGain();
+        partyDryGain.gain.value = 1;
+
+        partyEchoDelay = partyContext.createDelay(1.0);
+        partyEchoDelay.delayTime.value = 0.24;
+        partyEchoGain = partyContext.createGain();
+        partyEchoFeedback = partyContext.createGain();
+        partyWetMix = partyContext.createGain();
+        partyWetMix.gain.value = 1;
+
+        partyReverbNode = partyContext.createConvolver();
+        partyReverbNode.buffer = makePartyImpulse(partyContext);
+        partyReverbGain = partyContext.createGain();
+
+        partyMasterGain = partyContext.createGain();
+        const limiter = partyContext.createDynamicsCompressor();
+        limiter.threshold.value = -8;
+        limiter.knee.value = 8;
+        limiter.ratio.value = 8;
+        limiter.attack.value = 0.004;
+        limiter.release.value = 0.18;
+
+        partySource.connect(partyInputGain);
+        partyInputGain.connect(partyBassNode);
+        partyBassNode.connect(partyTrebleNode);
+
+        // Dry voice path.
+        partyTrebleNode.connect(partyDryGain);
+        partyDryGain.connect(partyMasterGain);
+
+        // Echo path with bounded feedback.
+        partyTrebleNode.connect(partyEchoDelay);
+        partyEchoDelay.connect(partyEchoGain);
+        partyEchoGain.connect(partyWetMix);
+        partyWetMix.connect(partyMasterGain);
+        partyEchoDelay.connect(partyEchoFeedback);
+        partyEchoFeedback.connect(partyEchoDelay);
+
+        // Reverb path.
+        partyTrebleNode.connect(partyReverbNode);
+        partyReverbNode.connect(partyReverbGain);
+        partyReverbGain.connect(partyMasterGain);
+
+        partyMasterGain.connect(limiter);
+        limiter.connect(partyContext.destination);
+
+        updatePartyAudio();
+        await refreshPartyInputs();
+        setPartyStatus('Live microphone is on — speak now!', true);
+        showToast('Party microphone started 🎉');
+        partyStream.getAudioTracks()[0].addEventListener('ended', () => {
+          stopPartyMicrophone();
+        }, { once: true });
+      } catch (err) {
+        console.error('Party microphone error:', err);
+        stopPartyMicrophone();
+        setPartyStatus(err && err.name === 'NotAllowedError'
+          ? 'Microphone permission was denied. Allow access and try again.'
+          : 'Could not start microphone. Check the device and try again.', false);
+        showToast('Could not start party microphone');
+      }
+    }
+
+    function stopPartyMicrophone() {
+      if (partyStream) {
+        partyStream.getTracks().forEach(track => track.stop());
+        partyStream = null;
+      }
+      if (partySource) {
+        try { partySource.disconnect(); } catch (err) {}
+      }
+      if (partyContext) {
+        const oldContext = partyContext;
+        partyContext = null;
+        oldContext.close().catch(() => {});
+      }
+      partySource = null;
+      partyInputGain = null;
+      partyBassNode = null;
+      partyTrebleNode = null;
+      partyEchoDelay = null;
+      partyEchoGain = null;
+      partyEchoFeedback = null;
+      partyReverbNode = null;
+      partyReverbGain = null;
+      partyMasterGain = null;
+      partyDryGain = null;
+      partyWetMix = null;
+      setPartyStatus('Microphone is stopped', false);
+    }
+
+    $('partyStartBtn').addEventListener('click', startPartyMicrophone);
+    $('partyStopBtn').addEventListener('click', () => {
+      stopPartyMicrophone();
+      showToast('Party microphone stopped');
+    });
+
+    ['partyVolume', 'partyBass', 'partyTreble', 'partyEcho', 'partyReverb'].forEach(id => {
+      $(id).addEventListener('input', updatePartyAudio);
+    });
+
+    document.querySelectorAll('[data-party-preset]').forEach(button => {
+      button.addEventListener('click', () => {
+        const presetName = button.dataset.partyPreset;
+        const preset = partyDefaults[presetName];
+        if (!preset) return;
+        Object.entries(preset).forEach(([key, value]) => {
+          const id = {
+            volume: 'partyVolume',
+            bass: 'partyBass',
+            treble: 'partyTreble',
+            echo: 'partyEcho',
+            reverb: 'partyReverb'
+          }[key];
+          $(id).value = value;
+        });
+        document.querySelectorAll('[data-party-preset]').forEach(item => item.classList.toggle('active', item === button));
+        updatePartyAudio();
+        showToast(button.textContent.trim() + ' preset applied');
+      });
+    });
+
+    $('partyInputDevice').addEventListener('change', async () => {
+      if (!partyStream) return;
+      stopPartyMicrophone();
+      await startPartyMicrophone();
+    });
+
+    if (navigator.mediaDevices && navigator.mediaDevices.addEventListener) {
+      navigator.mediaDevices.addEventListener('devicechange', refreshPartyInputs);
+    }
+
+    // ========== Recording ==========
+    async function startRecording() {
+      try {
+        ensureAudio();
+        mediaStream = await navigator.mediaDevices.getUserMedia({
+          audio: {
+            echoCancellation: true,
+            noiseSuppression: true,
+            autoGainControl: true
+          }
+        });
+        recordedChunks = [];
+        mediaRecorder = new MediaRecorder(mediaStream, { mimeType: 'audio/webm;codecs=opus' });
+        mediaRecorder.ondataavailable = e => {
+          if (e.data.size > 0) recordedChunks.push(e.data);
+        };
+        mediaRecorder.onstop = async () => {
+          const blob = new Blob(recordedChunks, { type: 'audio/webm' });
+          const arrayBuffer = await blob.arrayBuffer();
+          recordedBuffer = await audioContext.decodeAudioData(arrayBuffer);
+          duration = recordedBuffer.duration;
+          $('timeTotal').textContent = formatTime(duration);
+          drawWaveform($('voiceWave'), recordedBuffer, '#2ecc71');
+          drawWaveform($('bgWave'), null, '#3498db'); // empty bg for now
+          statusText.textContent = 'Recording ready — apply effects & play!';
+          statusDot.classList.remove('recording');
+          showToast('Recording complete! 🎉');
+          saveSettings();
+        };
+        mediaRecorder.start(100);
+        isRecording = true;
+        micBtn.classList.add('recording');
+        statusDot.classList.add('recording');
+        statusText.textContent = 'Recording… speak now!';
+        startBtn.disabled = true;
+        stopBtn.disabled = false;
+        showToast('Recording started');
+      } catch (err) {
+        console.error(err);
+        showToast('Microphone access denied or unavailable');
+      }
+    }
+
+    function stopRecording() {
+      if (mediaRecorder && isRecording) {
+        mediaRecorder.stop();
+        mediaStream.getTracks().forEach(t => t.stop());
+        isRecording = false;
+        micBtn.classList.remove('recording');
+        startBtn.disabled = false;
+        stopBtn.disabled = true;
+      }
+    }
+
+    micBtn.onclick = () => {
+      if (isRecording) stopRecording();
+      else startRecording();
+    };
+    startBtn.onclick = startRecording;
+    stopBtn.onclick = stopRecording;
+
+    // ========== Playback with effects ==========
+    function buildGraph(buffer) {
+      const ctx = ensureAudio();
+      // Clean previous
+      if (sourceNode) {
+        try { sourceNode.stop(); } catch(e){}
+        sourceNode.disconnect();
+      }
+
+      sourceNode = ctx.createBufferSource();
+      sourceNode.buffer = buffer;
+
+      // Pitch / speed via playbackRate (approximation)
+      const pitchSemis = parseFloat($('pitch').value) || 0;
+      const speedPct = parseFloat($('speed').value) / 100 || 1;
+      // Combine: playbackRate affects both pitch and speed. We approximate pitch primarily.
+      const rate = speedPct * Math.pow(2, pitchSemis / 12);
+      sourceNode.playbackRate.value = Math.max(0.25, Math.min(4, rate));
+
+      gainNode = ctx.createGain();
+      const voiceVol = (parseFloat($('voiceVol').value) / 100) * (parseFloat($('level').value) / 100);
+      gainNode.gain.value = voiceVol;
+
+      // Distortion
+      distortionNode = ctx.createWaveShaper();
+      const distAmt = parseFloat($('fxDistortion').value) || 0;
+      if (distAmt > 0) {
+        distortionNode.curve = makeDistortionCurve(distAmt);
+        distortionNode.oversample = '4x';
+      } else {
+        distortionNode.curve = null;
+      }
+
+      // Filter / EQ
+      filterNode = ctx.createBiquadFilter();
+      const eq = $('fxEQ').value;
+      if (eq === 'bass') {
+        filterNode.type = 'lowshelf';
+        filterNode.frequency.value = 200;
+        filterNode.gain.value = 12;
+      } else if (eq === 'treble') {
+        filterNode.type = 'highshelf';
+        filterNode.frequency.value = 3000;
+        filterNode.gain.value = 10;
+      } else if (eq === 'radio') {
+        filterNode.type = 'bandpass';
+        filterNode.frequency.value = 1500;
+        filterNode.Q.value = 1.2;
+      } else if (eq === 'warm') {
+        filterNode.type = 'lowshelf';
+        filterNode.frequency.value = 400;
+        filterNode.gain.value = 6;
+      } else {
+        filterNode.type = 'allpass';
+        filterNode.frequency.value = 1000;
+      }
+
+      // Delay / Echo
+      delayNode = ctx.createDelay(1.0);
+      const echoAmt = (parseFloat($('fxEcho').value) || 0) / 100;
+      delayNode.delayTime.value = 0.25;
+      const feedback = ctx.createGain();
+      feedback.gain.value = echoAmt * 0.6;
+      const delayGain = ctx.createGain();
+      delayGain.gain.value = echoAmt;
+
+      // Reverb
+      convolver = ctx.createConvolver();
+      const revAmt = (parseFloat($('reverb').value) || parseFloat($('fxReverb').value) || 0) / 100;
+      if (revAmt > 0.01) {
+        convolver.buffer = createReverbImpulse(1.2 + revAmt, 1.8);
+      }
+      const revGain = ctx.createGain();
+      revGain.gain.value = revAmt * 0.7;
+
+      // Robot-ish (bit of ring mod simulation via gain oscillation is complex; use filter + distortion already)
+      // Extra light high-pass for robot feel
+      const robotAmt = (parseFloat($('fxRobot').value) || 0) / 100;
+      if (robotAmt > 0.1) {
+        const robotFilter = ctx.createBiquadFilter();
+        robotFilter.type = 'bandpass';
+        robotFilter.frequency.value = 800 + robotAmt * 1200;
+        robotFilter.Q.value = 2 + robotAmt * 4;
+        // Insert later
+      }
+
+      masterGain = ctx.createGain();
+      masterGain.gain.value = (parseFloat($('masterVol').value) || 100) / 100;
+
+      // Mute effects?
+      const muteFx = $('muteEffects').checked;
+
+      // Connect chain
+      sourceNode.connect(gainNode);
+      if (!muteFx) {
+        gainNode.connect(distortionNode);
+        distortionNode.connect(filterNode);
+        filterNode.connect(delayNode);
+        delayNode.connect(feedback);
+        feedback.connect(delayNode);
+        delayNode.connect(delayGain);
+        delayGain.connect(masterGain);
+
+        if (revAmt > 0.01) {
+          filterNode.connect(convolver);
+          convolver.connect(revGain);
+          revGain.connect(masterGain);
+        }
+        filterNode.connect(masterGain);
+      } else {
+        gainNode.connect(masterGain);
+      }
+      masterGain.connect(ctx.destination);
+
+      return sourceNode;
+    }
+
+    function playProcessed() {
+      if (!recordedBuffer) {
+        showToast('Record your voice first!');
+        return;
+      }
+      ensureAudio();
+      if (isPlaying) {
+        stopPlayback();
+      }
+      const src = buildGraph(recordedBuffer);
+      src.onended = () => {
+        isPlaying = false;
+        playBtn.disabled = false;
+        pauseBtn.disabled = true;
+        pauseOffset = 0;
+      };
+      src.start(0, pauseOffset);
+      startTime = audioContext.currentTime - pauseOffset;
+      isPlaying = true;
+      playBtn.disabled = true;
+      pauseBtn.disabled = false;
+      updateProgress();
+    }
+
+    function stopPlayback() {
+      if (sourceNode) {
+        try { sourceNode.stop(); } catch(e){}
+        sourceNode.disconnect();
+        sourceNode = null;
+      }
+      isPlaying = false;
+      playBtn.disabled = false;
+      pauseBtn.disabled = true;
+    }
+
+    function pausePlayback() {
+      if (!isPlaying) return;
+      pauseOffset = audioContext.currentTime - startTime;
+      stopPlayback();
+    }
+
+    playBtn.onclick = playProcessed;
+    pauseBtn.onclick = pausePlayback;
+
+    function updateProgress() {
+      if (!isPlaying || !recordedBuffer) return;
+      const elapsed = audioContext.currentTime - startTime;
+      const pct = Math.min(100, (elapsed / duration) * 100);
+      $('seek').value = pct;
+      $('timeCurrent').textContent = formatTime(elapsed);
+      if (elapsed < duration) requestAnimationFrame(updateProgress);
+      else {
+        $('timeCurrent').textContent = formatTime(duration);
+        $('seek').value = 100;
+      }
+    }
+
+    $('seek').oninput = () => {
+      if (!recordedBuffer) return;
+      pauseOffset = (parseFloat($('seek').value) / 100) * duration;
+      $('timeCurrent').textContent = formatTime(pauseOffset);
+      if (isPlaying) {
+        stopPlayback();
+        playProcessed();
+      }
+    };
+
+    // ========== Waveform ==========
+    function drawWaveform(canvas, buffer, color) {
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width = canvas.offsetWidth * 2;
+      const h = canvas.height = 96;
+      ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, w, h);
+      if (!buffer) {
+        // draw empty line
+        ctx.strokeStyle = '#e8e0d5';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(0, h/2);
+        ctx.lineTo(w, h/2);
+        ctx.stroke();
+        return;
+      }
+      const data = buffer.getChannelData(0);
+      const step = Math.ceil(data.length / w);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      for (let i = 0; i < w; i++) {
+        let min = 1, max = -1;
+        for (let j = 0; j < step; j++) {
+          const val = data[(i * step) + j] || 0;
+          if (val < min) min = val;
+          if (val > max) max = val;
+        }
+        const y1 = ((1 + min) * 0.5) * h;
+        const y2 = ((1 + max) * 0.5) * h;
+        ctx.moveTo(i, y1);
+        ctx.lineTo(i, y2);
+      }
+      ctx.stroke();
+    }
+
+    // ========== Download WAV ==========
+    function bufferToWav(buffer) {
+      const numChannels = buffer.numberOfChannels;
+      const sampleRate = buffer.sampleRate;
+      const format = 1; // PCM
+      const bitDepth = 16;
+      const result = interleave(buffer);
+      const dataLength = result.length * (bitDepth / 8);
+      const bufferLength = 44 + dataLength;
+      const arrayBuffer = new ArrayBuffer(bufferLength);
+      const view = new DataView(arrayBuffer);
+
+      function writeString(view, offset, string) {
+        for (let i = 0; i < string.length; i++) {
+          view.setUint8(offset + i, string.charCodeAt(i));
+        }
+      }
+
+      writeString(view, 0, 'RIFF');
+      view.setUint32(4, 36 + dataLength, true);
+      writeString(view, 8, 'WAVE');
+      writeString(view, 12, 'fmt ');
+      view.setUint32(16, 16, true);
+      view.setUint16(20, format, true);
+      view.setUint16(22, numChannels, true);
+      view.setUint32(24, sampleRate, true);
+      view.setUint32(28, sampleRate * numChannels * (bitDepth / 8), true);
+      view.setUint16(32, numChannels * (bitDepth / 8), true);
+      view.setUint16(34, bitDepth, true);
+      writeString(view, 36, 'data');
+      view.setUint32(40, dataLength, true);
+
+      // write samples
+      let offset = 44;
+      for (let i = 0; i < result.length; i++, offset += 2) {
+        const s = Math.max(-1, Math.min(1, result[i]));
+        view.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
+      }
+      return arrayBuffer;
+    }
+
+    function interleave(buffer) {
+      if (buffer.numberOfChannels === 1) {
+        return buffer.getChannelData(0);
+      }
+      const left = buffer.getChannelData(0);
+      const right = buffer.getChannelData(1);
+      const length = left.length + right.length;
+      const result = new Float32Array(length);
+      let idx = 0;
+      for (let i = 0; i < left.length; i++) {
+        result[idx++] = left[i];
+        result[idx++] = right[i];
+      }
+      return result;
+    }
+
+    async function renderWithEffects() {
+      if (!recordedBuffer) {
+        showToast('Nothing to download — record first!');
+        return null;
+      }
+      const ctx = ensureAudio();
+      // Offline render for clean export
+      const offline = new OfflineAudioContext(
+        recordedBuffer.numberOfChannels,
+        Math.ceil(recordedBuffer.duration * recordedBuffer.sampleRate * 1.1),
+        recordedBuffer.sampleRate
+      );
+
+      const source = offline.createBufferSource();
+      source.buffer = recordedBuffer;
+
+      const pitchSemis = parseFloat($('pitch').value) || 0;
+      const speedPct = parseFloat($('speed').value) / 100 || 1;
+      const rate = speedPct * Math.pow(2, pitchSemis / 12);
+      source.playbackRate.value = Math.max(0.25, Math.min(4, rate));
+
+      const gain = offline.createGain();
+      gain.gain.value = (parseFloat($('voiceVol').value) / 100) * (parseFloat($('level').value) / 100);
+
+      const distortion = offline.createWaveShaper();
+      const distAmt = parseFloat($('fxDistortion').value) || 0;
+      if (distAmt > 0) {
+        distortion.curve = makeDistortionCurve(distAmt);
+        distortion.oversample = '4x';
+      }
+
+      const filter = offline.createBiquadFilter();
+      const eq = $('fxEQ').value;
+      if (eq === 'bass') { filter.type = 'lowshelf'; filter.frequency.value = 200; filter.gain.value = 12; }
+      else if (eq === 'treble') { filter.type = 'highshelf'; filter.frequency.value = 3000; filter.gain.value = 10; }
+      else if (eq === 'radio') { filter.type = 'bandpass'; filter.frequency.value = 1500; filter.Q.value = 1.2; }
+      else if (eq === 'warm') { filter.type = 'lowshelf'; filter.frequency.value = 400; filter.gain.value = 6; }
+      else { filter.type = 'allpass'; }
+
+      const delay = offline.createDelay(1.0);
+      const echoAmt = (parseFloat($('fxEcho').value) || 0) / 100;
+      delay.delayTime.value = 0.25;
+      const feedback = offline.createGain();
+      feedback.gain.value = echoAmt * 0.6;
+      const delayGain = offline.createGain();
+      delayGain.gain.value = echoAmt;
+
+      const convolver = offline.createConvolver();
+      const revAmt = (parseFloat($('reverb').value) || 0) / 100;
+      if (revAmt > 0.01) {
+        // simple impulse for offline
+        const rate = offline.sampleRate;
+        const length = rate * 1.5;
+        const impulse = offline.createBuffer(2, length, rate);
+        for (let c = 0; c < 2; c++) {
+          const ch = impulse.getChannelData(c);
+          for (let i = 0; i < length; i++) {
+            ch[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / length, 2);
+          }
+        }
+        convolver.buffer = impulse;
+      }
+      const revGain = offline.createGain();
+      revGain.gain.value = revAmt * 0.7;
+
+      const master = offline.createGain();
+      master.gain.value = (parseFloat($('masterVol').value) || 100) / 100;
+
+      source.connect(gain);
+      gain.connect(distortion);
+      distortion.connect(filter);
+      filter.connect(delay);
+      delay.connect(feedback);
+      feedback.connect(delay);
+      delay.connect(delayGain);
+      delayGain.connect(master);
+      if (revAmt > 0.01) {
+        filter.connect(convolver);
+        convolver.connect(revGain);
+        revGain.connect(master);
+      }
+      filter.connect(master);
+      master.connect(offline.destination);
+
+      source.start(0);
+      return await offline.startRendering();
+    }
+
+    $('downloadWav').onclick = async () => {
+      showToast('Rendering audio with effects…');
+      try {
+        const rendered = await renderWithEffects();
+        if (!rendered) return;
+        const wav = bufferToWav(rendered);
+        const blob = new Blob([wav], { type: 'audio/wav' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `m2a-voice-${currentVoice.id}-${Date.now()}.wav`;
+        a.click();
+        URL.revokeObjectURL(url);
+        showToast('WAV downloaded! 🎉');
+      } catch (e) {
+        console.error(e);
+        showToast('Render failed — try again');
+      }
+    };
+
+    // MP3 fallback: just offer the raw recorded webm renamed (browser limitation without encoder)
+    $('downloadMp3').onclick = async () => {
+      if (!recordedChunks.length && !recordedBuffer) {
+        showToast('Record something first!');
+        return;
+      }
+      // Best effort: download the original webm (many players accept it)
+      // True MP3 needs a library; we provide WAV as primary.
+      showToast('For highest quality use WAV. Providing original recording…');
+      if (recordedChunks.length) {
+        const blob = new Blob(recordedChunks, { type: 'audio/webm' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `m2a-voice-${currentVoice.id}-${Date.now()}.webm`;
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+    };
+
+    // ========== Save / Load project ==========
+    function saveSettings() {
+      const data = {
+        voiceId: currentVoice.id,
+        level: $('level').value,
+        pitch: $('pitch').value,
+        speed: $('speed').value,
+        reverb: $('reverb').value,
+        fxPitch: $('fxPitch').value,
+        fxEcho: $('fxEcho').value,
+        fxReverb: $('fxReverb').value,
+        fxRobot: $('fxRobot').value,
+        fxDistortion: $('fxDistortion').value,
+        fxEQ: $('fxEQ').value,
+        musicVol: $('musicVol').value,
+        voiceVol: $('voiceVol').value,
+        masterVol: $('masterVol').value,
+        muteEffects: $('muteEffects').checked
+      };
+      localStorage.setItem('m2a-voice-studio', JSON.stringify(data));
+    }
+
+    function loadSettings() {
+      try {
+        const raw = localStorage.getItem('m2a-voice-studio');
+        if (!raw) return;
+        const data = JSON.parse(raw);
+        if (data.voiceId) selectVoice(data.voiceId);
+        ['level','pitch','speed','reverb','musicVol','voiceVol','masterVol'].forEach(k => {
+          if (data[k] != null) $(k).value = data[k];
+        });
+        ['fxPitch','fxEcho','fxReverb','fxRobot','fxDistortion','fxEQ'].forEach(k => {
+          if (data[k] != null) $(k).value = data[k];
+        });
+        if (data.muteEffects != null) $('muteEffects').checked = data.muteEffects;
+        updateSliderLabels();
+      } catch (e) {}
+    }
+
+    $('saveProject').onclick = () => {
+      saveSettings();
+      showToast('Project settings saved to browser 💾');
+    };
+
+    // ========== Quick examples & nav ==========
+    document.querySelectorAll('.quick-btn').forEach(btn => {
+      btn.onclick = () => selectVoice(btn.dataset.voice);
+    });
+
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+      btn.onclick = () => {
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        // For now all point to the main changer view
+        showToast(btn.textContent.trim() + ' — main studio is ready');
+      };
+    });
+
+    // ========== Helpers ==========
+    function formatTime(s) {
+      const m = Math.floor(s / 60);
+      const sec = Math.floor(s % 60);
+      return String(m).padStart(2, '0') + ':' + String(sec).padStart(2, '0');
+    }
+
+    function showToast(msg) {
+      toast.textContent = msg;
+      toast.classList.add('show');
+      clearTimeout(toast._t);
+      toast._t = setTimeout(() => toast.classList.remove('show'), 2600);
+    }
+
+    // Release live audio when leaving the page.
+    window.addEventListener('pagehide', stopPartyMicrophone);
+
+    // ========== Boot ==========
+    updatePartyLabels();
+    refreshPartyInputs();
+    buildVoiceGrid();
+    buildPresetList();
+    updateSliderLabels();
+    loadSettings();
+    drawWaveform($('bgWave'), null, '#3498db');
+    drawWaveform($('voiceWave'), null, '#2ecc71');
+
+    // Resize canvases on resize
+    window.addEventListener('resize', () => {
+      if (recordedBuffer) {
+        drawWaveform($('voiceWave'), recordedBuffer, '#2ecc71');
+      } else {
+        drawWaveform($('voiceWave'), null, '#2ecc71');
+      }
+      drawWaveform($('bgWave'), null, '#3498db');
+    });
+  </script>
+  
+  <div class='mobile-hub'>
+
+    
+  <div id='emb99d-footer' style='background:#111; text-align:center; padding:10px 0; font-family:Raleway, Arial, sans-serif;'>
+
+    <a href='/' rel='noopener noreferrer' style='color:#04ff00; margin:0 6px; text-decoration:none;'>Home</a>
+    <span style='color:#fff;'>|</span>
+    
+    <a href='https://www.marketing2advertising.com/p/contact-us.html' rel='noopener noreferrer' style='color:#04ff00; margin:0 6px; text-decoration:none;'>Contact</a>
+    <span style='color:#fff;'>|</span>
+    
+    <a href='https://www.marketing2advertising.com/p/privacy-policy.html' rel='noopener noreferrer' style='color:#04ff00; margin:0 6px; text-decoration:none;' target='_blank'>Privacy</a>
+    <span style='color:#fff;'>|</span>
+    
+    <a href='https://www.marketing2advertising.com/p/affiliate-marketing-and-adsense.html' rel='noopener noreferrer' style='color:#04ff00; margin:0 6px; text-decoration:none;' target='_blank'>Disclosure</a>
+    <span style='color:#fff;'>|</span>
+    
+    <a href='https://www.marketing2advertising.com/p/terms-and-conditions.html' rel='noopener noreferrer' style='color:#04ff00; margin:0 6px; text-decoration:none;' target='_blank'>Terms</a>
+  
+    <p style='color:#aaa; font-size:14px; margin:10px 0 0;'>
+      &#169; Marketing2Advertising. All rights reserved.
+    </p>
+
+</div>
+
+<script>
+(function() {
+  try {
+    if (window.self !== window.top) {
+      var el = document.getElementById(&quot;emb99d-footer&quot;);
+      if (el) el.style.display = &quot;none&quot;;
+    }
+  } catch (e) {
+    // If cross-origin iframe blocks access, still hide it
+    var el = document.getElementById(&quot;emb99d-footer&quot;);
+    if (el) el.style.display = &quot;none&quot;;
+  }
+})();
+</script>
+  
+<div class='mobile-only-bar'/>
+  </div>
+    
+      <script>
+(function() {
+  try {
+    // Detect if page is inside iframe
+    if (window.self !== window.top) {
+      var el = document.getElementById(&quot;e66d-hide&quot;);
+      if (el) el.style.display = &quot;none&quot;;
+    }
+  } catch (e) {
+    // If cross-origin iframe, still hide
+    var el = document.getElementById(&quot;e66d-hide&quot;);
+    if (el) el.style.display = &quot;none&quot;;
+  }
+})();
+</script>
+    
+      
+
+</body>
+</html>
